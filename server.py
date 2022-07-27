@@ -19,32 +19,22 @@ class Chatbot:
         pass
 
     def analyze(self, str_to_analyze):
-        """
-        The function gets raw string, and tries to run the
-        matching action function.
-        """
-        print("[INFO] Word to analyze: ", str_to_analyze)
-        if str_to_analyze.startswith("ping"):
-            return self.ping(str_to_analyze)
+        first_word = str_to_analyze.split()[0]
+        rest_of_word = str_to_analyze.replace(first_word + " ", '', 1)
+        try:
+            result = getattr(self, first_word)(rest_of_word)
+            print(result)
+            return result
 
-        elif str_to_analyze.startswith("solve"):
-            print(self.solve(str_to_analyze))
-            return self.solve(str_to_analyze)
-
-        elif str_to_analyze.startswith("reverse"):
-            return self.reversed(str_to_analyze)
-        else:
-            error = "[ERROR] Unknown analyze command for string: %s" % str_to_analyze
-            print("%s" % error)
-            return error
+        except:
+            return "Igal type something else"
 
     def ping(self, str_to_analyze):
         """
         The function gets string that starts with 'ping', and
         returns the text after the word 'ping'
         """
-        word_to_ping = str_to_analyze.replace('ping ', '', 1)  # Replace first occurrence of "ping "
-        return word_to_ping
+        return str_to_analyze
 
     def solve(self, str_to_analyze):
         """
@@ -52,50 +42,19 @@ class Chatbot:
         The input needs to be as following 'solve num1 math_sign num2'.
         For example "solve 1 + 4" return 5
         """
-        if len(str_to_analyze.split()) != 4:
-            error = "[ERROR] The input string need to be as following 'solve num1 math_sign num2'"
-            print("%s" % error)
-            return error
-        solve, num1, sign, num2 = str_to_analyze.split()
-
         try:
-            num1, num2 = float(num1), float(num2)
-        except:
-            error = "[ERROR] num1 and num2 needs to be numbers."
-            print("%s" % error)
-            return error
+            result = eval(str_to_analyze)
+        except Exception as e:
+            return e
+        return result
 
-        if sign == '+':
-            return num1 + num2
-
-        elif sign == '-':
-            return num1 - num2
-
-        elif sign in [':', '/']:
-            try:
-                return num1 / num2
-
-            except ZeroDivisionError:
-                error = "[ERROR] Can't divide by zero, try again"
-                print("%s " % error)
-                return error
-
-        elif sign in ['*', 'x', 'X']:
-            return num1 * num2
-
-        else:
-            error = "[ERROR] unknown math sign %s " % sign
-            print("%s " % error)
-            return error
-
-    def reversed(self, str_to_analyze):
+    def reverse(self, str_to_analyze):
         """
         The function reverse the input string, e.g.
         "hello world" -> "dlrow olleh"
         """
-        word_ro_reverse = str_to_analyze.replace('reverse ', '', 1)  # Replace first reverse word
-        word_ro_reverse = word_ro_reverse[::-1]
-        return word_ro_reverse
+        word_reversed = str_to_analyze[::-1]
+        return word_reversed
 
 
 connected = True
